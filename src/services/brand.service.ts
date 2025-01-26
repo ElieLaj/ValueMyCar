@@ -1,5 +1,6 @@
 import { BrandRepository } from "../repositories/brand.repository"
 import type { IBrand } from "../models/brand.model"
+import { AppError } from "../utils/AppError"
 
 export class BrandService {
   private brandRepository: BrandRepository
@@ -10,15 +11,15 @@ export class BrandService {
 
   async createBrand(brandData: Partial<IBrand>): Promise<IBrand> {
     if (!brandData.name) {
-      throw new Error("Name is required")
+      throw new AppError("Name is required", 400)
     }
     if (!brandData.country) {
-      throw new Error("Country is required")
+      throw new AppError("Country is required", 400)
     }
     const brand = await this.brandRepository.findBy({ name: brandData.name})
 
     if (brand) {
-      throw new Error("Brand already exists")
+      throw new AppError("Brand already exists", 400)
     }
 
     return await this.brandRepository.create(brandData)

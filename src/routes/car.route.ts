@@ -4,11 +4,11 @@ import { CarController } from "../controllers/car.controller"
 const router = Router()
 const carController = new CarController()
 
-router.post("/", (req, res) => carController.createCar(req, res))
-router.get("/:id", (req, res) => carController.getCar(req, res))
-router.get("/", (req, res) => carController.getCars(req, res))
-router.put("/:id", (req, res) => carController.updateCar(req, res))
-router.delete("/:id", (req, res) => carController.deleteCar(req, res))
+router.post("/", (req, res, next) => carController.createCar(req, res, next))
+router.get("/:id", (req, res, next) => carController.getCar(req, res, next))
+router.get("/", (req, res, next) => carController.getCars(req, res, next))
+router.put("/:id", (req, res, next) => carController.updateCar(req, res, next))
+router.delete("/:id", (req, res, next) => carController.deleteCar(req, res, next))
 
 export const carRoutes = router
 
