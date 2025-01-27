@@ -9,26 +9,26 @@ export class BrandRepository {
 
   async findAll(page: number, limit: number): Promise<{ brands: IBrand[]; total: number }> {
     const skip = (page - 1) * limit
-    const [brands, total] = await Promise.all([Brand.find().skip(skip).limit(limit), Brand.countDocuments()])
+    const [brands, total] = await Promise.all([Brand.find().populate("cars").skip(skip).limit(limit), Brand.countDocuments()])
     return { brands, total }
   }
 
   async findOneBy(criteria: FilterQuery<IBrand>): Promise<IBrand | null> {
-    return await Brand.findOne(criteria)
+    return await Brand.findOne(criteria).populate("cars")
   }
 
   async findBy(criteria: Partial<IBrand>, page: number, limit: number): Promise<{ brands: IBrand[]; total: number }> {
     const skip = (page - 1) * limit
-    const [brands, total] = await Promise.all([Brand.find(criteria as FilterQuery<IBrand>).skip(skip).limit(limit), Brand.countDocuments()])
+    const [brands, total] = await Promise.all([Brand.find(criteria as FilterQuery<IBrand>).populate("cars").skip(skip).limit(limit), Brand.countDocuments()])
     return { brands, total }
   }
 
   async findById(id: string): Promise<IBrand | null> {
-    return await Brand.findOne({ id })
+    return await Brand.findOne({ id }).populate("cars")
   }
 
   async update(id: string, brandData: Partial<IBrand>): Promise<IBrand | null> {
-    return await Brand.findOneAndUpdate({ id }, brandData, { new: true })
+    return await Brand.findOneAndUpdate({ id }, brandData, { new: true }).populate("cars")
   }
 
   async delete(id: string): Promise<boolean> {
