@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import app from "./app"
 import { connectMongooseDB } from "./config/database/mongoose.config";
+import "reflect-metadata"
 
 dotenv.config();
 
