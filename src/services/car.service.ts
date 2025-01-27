@@ -2,6 +2,7 @@ import { CarRepository } from "../repositories/car.repository"
 import type { ICar } from "../models/car.model"
 import { AppError } from "../utils/AppError"
 import { BrandRepository } from "../repositories/brand.repository"
+import { CarToCreate, CarToModify, SearchCarCriteria } from "../types/carDtos"
 
 
 export class CarService {
@@ -13,10 +14,7 @@ export class CarService {
     this.brandRepository = new BrandRepository()
   }
 
-  async createCar(carData: Partial<ICar>): Promise<ICar> {
-    if (!carData.name || !carData.brand || !carData.year || !carData.price) {
-      throw new AppError("Missing required fields", 400)
-    }
+  async createCar(carData: CarToCreate): Promise<ICar> {
 
     const brand = await this.brandRepository.findOneBy({id: carData.brand })
     if (!brand) {
@@ -41,13 +39,16 @@ export class CarService {
     return car
   }
 
-  async getCars(criteria: Partial<ICar>, page: number, limit: number): Promise<{ cars: ICar[]; total: number; pages: number }> {
-    const { cars, total } = await this.carRepository.findBy(criteria, page, limit)
+  async getCars(searchCriteria: SearchCarCriteria): Promise<{ cars: ICar[]; total: number; pages: number }> {
+    const { page = 1, limit = 10, ...filters } = searchCriteria
+
+    const { cars, total } = await this.carRepository.findBy(filters, page, limit)
     const pages = Math.ceil(total / limit)
+
     return { cars, total, pages }
   }
 
-  async updateCar(id: string, carData: Partial<ICar>): Promise<ICar> {
+  async updateCar(id: string, carData: CarToModify): Promise<ICar> {
     const car = await this.carRepository.findById(id)
     if (!car) {
       throw new AppError("Car not found", 404)
