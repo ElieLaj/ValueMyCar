@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express"
 import { CarService } from "../services/car.service"
 import { plainToClass, plainToInstance } from "class-transformer"
-import { CarPresenter, CarToCreate, CarToModify, SearchCarCriteria } from "../types/carDtos"
+import { BrandCarPresenter, CarPresenter, CarToCreate, CarToModify, SearchCarCriteria } from "../types/carDtos"
 import { validate } from "class-validator"
 import { AppError } from "../utils/AppError"
 
@@ -26,7 +26,7 @@ export class CarController {
 
       const car = await this.carService.createCar(carData)
 
-      const carPresenter = plainToClass(CarPresenter, car, { excludeExtraneousValues: true })
+      const carPresenter = plainToClass(BrandCarPresenter, car, { excludeExtraneousValues: true })
 
       res.status(201).json(carPresenter)
     } catch (error) {
@@ -109,7 +109,10 @@ export class CarController {
       }
 
       const car = await this.carService.patchCar(req.params.id, req.body)
-      res.status(200).json(car)
+
+      const carPresenter = plainToClass(CarPresenter, car, { excludeExtraneousValues: true })
+
+      res.status(200).json(carPresenter)
     } catch (error) {
       next(error)
     }

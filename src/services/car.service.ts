@@ -53,27 +53,26 @@ export class CarService {
     if (!car) {
       throw new AppError("Car not found", 404)
     }
+    
+    const newBrand = await this.brandRepository.findOneBy({ id: carData.brand })
+
+    if (!newBrand) {
+      throw new AppError("Brand not found", 404)
+    }
 
     if (car.brand.id !== carData.brand) {
       const oldBrand = await this.brandRepository.findOneBy({ id: car.brand.id })
-      const newBrand = await this.brandRepository.findOneBy({ id: carData.brand })
-
-      if (!newBrand) {
-        throw new AppError("New brand not found", 404)
-      }
 
       if (oldBrand) {
         oldBrand.cars = oldBrand.cars.filter((car) => car.id !== id)
         await oldBrand.save()
       }
 
-      carData.brand = newBrand._id
-
       newBrand.cars.push(car._id)
       await newBrand.save()
     }
 
-    const updatedCar = await this.carRepository.update(id, carData)
+    const updatedCar = await this.carRepository.update(id, { ...carData, brand: newBrand._id })
     if (!updatedCar) {
       throw new AppError("Car not found", 404)
     }

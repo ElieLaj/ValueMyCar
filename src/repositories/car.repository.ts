@@ -1,9 +1,9 @@
 import { FilterQuery } from "mongoose";
 import Car, { type ICar } from "../models/car.model"
-import { SearchCarCriteria } from "../types/carDtos";
+import { CarToCreate, CarToModify, SearchCarCriteria } from "../types/carDtos";
 
 export class CarRepository {
-  async create(carData: Partial<ICar>): Promise<ICar> {
+  async create(carData: CarToCreate): Promise<ICar> {
     const car = new Car(carData)
     return await car.save()
   }

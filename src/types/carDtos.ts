@@ -1,5 +1,5 @@
 import { IsString, IsNumber, IsUUID, Min, Max, IsOptional, ValidateNested } from "class-validator"
-import { Expose, Type } from "class-transformer"
+import { Expose, Transform, Type } from "class-transformer"
 import { BrandPresenter, CarBrandPresenter } from "./brandDtos"
 import "reflect-metadata"
 
@@ -104,3 +104,19 @@ export class CarPresenter {
   price!: number
 }
 
+export class BrandCarPresenter {
+  @Expose()
+  id!: string
+
+  @Expose()
+  name!: string
+
+  @Expose()
+  brand!: BrandPresenter
+
+  @Expose()
+  year!: number
+
+  @Expose()
+  price!: number
+}

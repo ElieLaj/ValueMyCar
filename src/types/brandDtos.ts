@@ -1,6 +1,6 @@
 import { IsString, IsOptional, IsArray, ValidateNested, IsNumber, Min, Max } from 'class-validator';
 import { Expose, Type } from 'class-transformer';
-import { CarPresenter } from './carDtos';
+import { BrandCarPresenter, CarPresenter } from './carDtos';
 import "reflect-metadata"
 
 export class BrandToCreate {
@@ -64,9 +64,9 @@ export class BrandPresenter {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CarPresenter)
+  @Type(() => BrandCarPresenter)
   @Expose()
-  cars?: CarPresenter[];
+  cars?: BrandCarPresenter[];
 }
 
 export class CarBrandPresenter {
@@ -75,6 +75,9 @@ export class CarBrandPresenter {
 
   @Expose()
   name!: string;
+
+  @Expose()
+  brand!: BrandPresenter
 
   @Expose()
   country!: string;

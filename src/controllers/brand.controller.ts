@@ -4,7 +4,7 @@ import { BrandPresenter, BrandToCreate, BrandToModify, BrandToReplace, SearchBra
 import { plainToClass, plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { AppError } from "../utils/AppError";
-import { CarPresenter } from "../types/carDtos";
+import { BrandCarPresenter, CarPresenter } from "../types/carDtos";
 
 export class BrandController {
   private brandService: BrandService
@@ -62,7 +62,7 @@ export class BrandController {
     try {
       const cars = await this.brandService.getBrandCars(req.params.id)
 
-      const carPresenters = plainToInstance(CarPresenter, cars, { excludeExtraneousValues: true })
+      const carPresenters = plainToInstance(BrandCarPresenter, cars, { excludeExtraneousValues: true })
       
       res.status(200).json(carPresenters)
     } catch (error) {
