@@ -1,6 +1,7 @@
 import { BrandRepository } from "../repositories/brand.repository"
 import type { IBrand } from "../models/brand.model"
 import { AppError } from "../utils/AppError"
+import { ICar } from "../models/car.model"
 
 export class BrandService {
   private brandRepository: BrandRepository
@@ -32,11 +33,20 @@ export class BrandService {
   }
 
   async getBrand(id: string): Promise<IBrand> {
-    const brand = await this.brandRepository.findById(id)
+    const brand = await this.brandRepository.findOneBy({id})
     if (!brand) {
       throw new AppError("Brand not found", 404)
     }
     return brand
+  }
+
+  async getBrandCars(id: string): Promise<ICar[]> {
+    const brand = await this.brandRepository.findOneBy({id})
+    if (!brand) {
+      throw new AppError("Brand not found", 404)
+    }
+
+    return brand.cars
   }
 
   async updateBrand(id: string, brandData: Partial<IBrand>): Promise<IBrand> {
@@ -77,7 +87,7 @@ export class BrandService {
   }
 
   async deleteBrand(id: string): Promise<void> {
-    const brand = await this.brandRepository.findById(id)
+    const brand = await this.brandRepository.findOneBy({id})
     if (!brand) {
       throw new AppError("Brand not found", 404)
     }

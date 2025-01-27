@@ -23,10 +23,6 @@ export class BrandRepository {
     return { brands, total }
   }
 
-  async findById(id: string): Promise<IBrand | null> {
-    return await Brand.findOne({ id }).populate("cars")
-  }
-
   async update(id: string, brandData: Partial<IBrand>): Promise<IBrand | null> {
     return await Brand.findOneAndUpdate({ id }, brandData, { new: true }).populate("cars")
   }

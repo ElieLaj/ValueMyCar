@@ -3,6 +3,8 @@ import { BrandService } from "../services/brand.service"
 
 export class BrandController {
   private brandService: BrandService
+  private page: number = 1;
+  private limit: number = 10;
 
   constructor() {
     this.brandService = new BrandService()
@@ -21,8 +23,8 @@ export class BrandController {
     try {
       const criteria = req.query
 
-      const page = Number.parseInt(req.query.page as string) || 1
-      const limit = Number.parseInt(req.query.limit as string) || 10
+      const page = Number.parseInt(req.query.page as string) || this.page
+      const limit = Number.parseInt(req.query.limit as string) || this.limit
       const result = await this.brandService.getBrands(criteria, page, limit)
       res.json(result)
     } catch (error) {
@@ -30,10 +32,10 @@ export class BrandController {
     }
   }
 
-  async getBrand(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getBrandCars(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const brand = await this.brandService.getBrand(req.params.id)
-      res.status(200).json(brand)
+      const cars = await this.brandService.getBrandCars(req.params.id)
+      res.status(200).json(cars)
     } catch (error) {
       next(error)
     }
