@@ -1,10 +1,11 @@
 import mongoose, { Schema, type Document } from "mongoose"
 import { v4 as uuidv4 } from "uuid"
+import { IBrand } from "./brand.model"
 
 export interface ICar extends Document {
   id: string
   name: string
-  brandId: string
+  brand: IBrand["_id"]
   year: number
   price: number
 }
@@ -12,7 +13,7 @@ export interface ICar extends Document {
 const CarSchema: Schema = new Schema({
   id: { type: String, default: uuidv4, unique: true },
   name: { type: String, required: [true, "Name is required"] },
-  brandId: { type: String, required: [true, "BrandId is required"] },
+  brand: { type: Schema.Types.ObjectId, ref: "Brand", required: [true, "Brand is required"] },
   year: {
     type: Number,
     required: [true, "Year is required"],
