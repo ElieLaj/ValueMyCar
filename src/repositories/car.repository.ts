@@ -21,7 +21,7 @@ export class CarRepository {
   async findBy(filters: Partial<SearchCarCriteria>, page: number, limit: number): Promise<{ cars: ICar[]; total: number }> {
     const skip = (page - 1) * limit
 
-    const query: any = {}
+    const query: FilterQuery<SearchCarCriteria> = {}
     if (filters.name) query.name = { $regex: filters.name, $options: "i" }
     if (filters.brand) query.brand = filters.brand
     if (filters.year) query.year = filters.year

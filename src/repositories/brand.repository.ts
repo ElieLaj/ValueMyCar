@@ -1,5 +1,6 @@
 import { FilterQuery } from "mongoose";
 import Brand, { type IBrand } from "../models/brand.model"
+import { SearchBrandCriteria } from "../types/brandDtos";
 
 export class BrandRepository {
   async create(brandData: Partial<IBrand>): Promise<IBrand> {
@@ -17,9 +18,14 @@ export class BrandRepository {
     return await Brand.findOne(criteria).populate("cars")
   }
 
-  async findBy(criteria: Partial<IBrand>, page: number, limit: number): Promise<{ brands: IBrand[]; total: number }> {
+  async findBy(filters: Partial<SearchBrandCriteria>, page: number, limit: number): Promise<{ brands: IBrand[]; total: number }> {
     const skip = (page - 1) * limit
-    const [brands, total] = await Promise.all([Brand.find(criteria as FilterQuery<IBrand>).populate("cars").skip(skip).limit(limit), Brand.countDocuments()])
+    
+    const query: FilterQuery<SearchBrandCriteria> = {}
+    if (filters.name) query.name = { $regex: filters.name, $options: "i" }
+    if (filters.country) query.country = filters.country
+    
+    const [brands, total] = await Promise.all([Brand.find(query).populate("cars").skip(skip).limit(limit), Brand.countDocuments(query)])
     return { brands, total }
   }
 

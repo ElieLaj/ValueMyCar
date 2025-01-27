@@ -2,6 +2,7 @@ import { BrandRepository } from "../repositories/brand.repository"
 import type { IBrand } from "../models/brand.model"
 import { AppError } from "../utils/AppError"
 import { ICar } from "../models/car.model"
+import { BrandToModify, BrandToReplace, SearchBrandCriteria } from "../types/brandDtos"
 
 export class BrandService {
   private brandRepository: BrandRepository
@@ -11,12 +12,6 @@ export class BrandService {
   }
 
   async createBrand(brandData: Partial<IBrand>): Promise<IBrand> {
-    if (!brandData.name) {
-      throw new AppError("Name is required", 400)
-    }
-    if (!brandData.country) {
-      throw new AppError("Country is required", 400)
-    }
     const brand = await this.brandRepository.findOneBy({ name: brandData.name})
 
     if (brand) {
@@ -26,8 +21,9 @@ export class BrandService {
     return await this.brandRepository.create(brandData)
   }
 
-  async getBrands(criteria: Partial<IBrand>, page: number, limit: number): Promise<{ brands: IBrand[]; total: number; pages: number }> {
-    const { brands, total } = await this.brandRepository.findBy(criteria, page, limit)
+  async getBrands(searchCriteria: SearchBrandCriteria): Promise<{ brands: IBrand[]; total: number; pages: number }> {
+    const { page = 1, limit = 10, ...filters } = searchCriteria
+    const { brands, total } = await this.brandRepository.findBy(filters, page, limit)
     const pages = Math.ceil(total / limit)
     return { brands, total, pages }
   }
@@ -49,7 +45,7 @@ export class BrandService {
     return brand.cars
   }
 
-  async updateBrand(id: string, brandData: Partial<IBrand>): Promise<IBrand> {
+  async updateBrand(id: string, brandData: BrandToReplace): Promise<IBrand> {
     if (!brandData.name) {
       throw new AppError("Name is required", 400)
     }
@@ -71,7 +67,7 @@ export class BrandService {
     return updatedBrand
   }
 
-  async patchBrand(id: string, brandData: Partial<IBrand>): Promise<IBrand> {
+  async patchBrand(id: string, brandData: BrandToModify): Promise<IBrand> {
     if (brandData.name) {
       const existingBrand = await this.brandRepository.findOneBy({ name: brandData.name })
       if (existingBrand && existingBrand.id !== id) {

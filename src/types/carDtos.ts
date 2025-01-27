@@ -1,6 +1,7 @@
-import { IsString, IsNumber, IsUUID, Min, Max, IsOptional } from "class-validator"
-import { Expose } from "class-transformer"
-import { BrandPresenter } from "./brandDtos"
+import { IsString, IsNumber, IsUUID, Min, Max, IsOptional, ValidateNested } from "class-validator"
+import { Expose, Type } from "class-transformer"
+import { BrandPresenter, CarBrandPresenter } from "./brandDtos"
+import "reflect-metadata"
 
 export class CarToCreate {
   @IsString()
@@ -92,8 +93,9 @@ export class CarPresenter {
   @Expose()
   name!: string
 
+  @Type(() => CarBrandPresenter)
   @Expose()
-  brand!: BrandPresenter
+  brand!: CarBrandPresenter
 
   @Expose()
   year!: number

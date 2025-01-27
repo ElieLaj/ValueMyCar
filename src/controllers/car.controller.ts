@@ -48,8 +48,6 @@ export class CarController {
     try {
       const searchCriteria = plainToClass(SearchCarCriteria, req.query)
 
-      console.log(searchCriteria)
-
       const dtoErrors = await validate(searchCriteria);
 
       if (dtoErrors.length > 0) {

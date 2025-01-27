@@ -1,5 +1,10 @@
 import type { NextFunction, Request, Response } from "express"
 import { BrandService } from "../services/brand.service"
+import { BrandPresenter, BrandToCreate, BrandToModify, BrandToReplace, SearchBrandCriteria } from "../types/brandDtos";
+import { plainToClass, plainToInstance } from "class-transformer";
+import { validate } from "class-validator";
+import { AppError } from "../utils/AppError";
+import { CarPresenter } from "../types/carDtos";
 
 export class BrandController {
   private brandService: BrandService
@@ -12,8 +17,20 @@ export class BrandController {
 
   async createBrand(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const brand = await this.brandService.createBrand(req.body)
-      res.status(201).json(brand)
+      const brandData = plainToClass(BrandToCreate, req.body)
+
+      const dtoErrors = await validate(brandData);
+      
+      if (dtoErrors.length > 0) {
+        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
+        const errors = constraints.map(constraint => constraint || "").join(", ");
+        throw new AppError(errors || "Invalid input", 400);
+      }
+
+      const brand = await this.brandService.createBrand(brandData)
+      const brandPresenter = plainToClass(BrandPresenter, brand, { excludeExtraneousValues: true })
+      
+      res.status(201).json(brandPresenter)
     } catch (error) {
         next(error)
     }
@@ -21,12 +38,21 @@ export class BrandController {
 
   async getBrands(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const criteria = req.query
+      const searchCriteria = plainToClass(SearchBrandCriteria, req.query)
 
-      const page = Number.parseInt(req.query.page as string) || this.page
-      const limit = Number.parseInt(req.query.limit as string) || this.limit
-      const result = await this.brandService.getBrands(criteria, page, limit)
-      res.json(result)
+      const dtoErrors = await validate(searchCriteria);
+      
+      if (dtoErrors.length > 0) {
+        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
+        const errors = constraints.map(constraint => constraint || "").join(", ");
+        throw new AppError(errors || "Invalid input", 400);
+      }
+
+      const result = await this.brandService.getBrands(searchCriteria)
+
+      const brandPresenters = plainToInstance(BrandPresenter, result.brands, { excludeExtraneousValues: true })
+
+      res.json(brandPresenters)
     } catch (error) {
         next(error)
     }
@@ -35,7 +61,10 @@ export class BrandController {
   async getBrandCars(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const cars = await this.brandService.getBrandCars(req.params.id)
-      res.status(200).json(cars)
+
+      const carPresenters = plainToInstance(CarPresenter, cars, { excludeExtraneousValues: true })
+      
+      res.status(200).json(carPresenters)
     } catch (error) {
       next(error)
     }
@@ -43,8 +72,20 @@ export class BrandController {
 
   async updateBrand(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const brand = await this.brandService.updateBrand(req.params.id, req.body)
-      res.status(200).json(brand)
+      const brandData = plainToClass(BrandToReplace, req.body)
+
+      const dtoErrors = await validate(brandData);
+      
+      if (dtoErrors.length > 0) {
+        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
+        const errors = constraints.map(constraint => constraint || "").join(", ");
+        throw new AppError(errors || "Invalid input", 400);
+      }
+
+      const brand = await this.brandService.updateBrand(req.params.id, brandData)
+      const brandPresenter = plainToClass(BrandPresenter, brand, { excludeExtraneousValues: true })
+      
+      res.status(200).json(brandPresenter)
     } catch (error) {
       next(error)
     }
@@ -52,8 +93,21 @@ export class BrandController {
 
   async patchBrand(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const brand = await this.brandService.patchBrand(req.params.id, req.body)
-      res.status(200).json(brand)
+      const brandData = plainToClass(BrandToModify, req.body)
+
+      const dtoErrors = await validate(brandData);
+      
+      if (dtoErrors.length > 0) {
+        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
+        const errors = constraints.map(constraint => constraint || "").join(", ");
+        throw new AppError(errors || "Invalid input", 400);
+      }
+
+      const brand = await this.brandService.patchBrand(req.params.id, brandData)
+      const brandPresenter = plainToClass(BrandPresenter, brand, { excludeExtraneousValues: true })
+
+
+      res.status(200).json(brandPresenter)
     } catch (error) {
       next(error)
     }
