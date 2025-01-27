@@ -18,7 +18,7 @@ export class CarService {
       throw new AppError("Missing required fields", 400)
     }
 
-    const brand = await this.brandRepository.findById(carData.brand.toString())
+    const brand = await this.brandRepository.findOneBy({id: carData.brand })
     if (!brand) {
       throw new AppError("Brand not found", 404)
     }
@@ -54,8 +54,8 @@ export class CarService {
     }
 
     if (car.brand.id !== carData.brand) {
-      const oldBrand = await this.brandRepository.findById(car.brand.id)
-      const newBrand = await this.brandRepository.findById(carData.brand)
+      const oldBrand = await this.brandRepository.findOneBy({ id: car.brand.id })
+      const newBrand = await this.brandRepository.findOneBy({ id: carData.brand })
 
       if (!newBrand) {
         throw new AppError("New brand not found", 404)
@@ -86,7 +86,7 @@ export class CarService {
       throw new AppError("Car not found", 404)
     }
 
-    const brand = await this.brandRepository.findById(car.brand.id)
+    const brand = await this.brandRepository.findOneBy({id: car.brand.id})
     if (brand) {
       brand.cars = brand.cars.filter((car) => car.id !== id)
       await brand.save()
@@ -105,8 +105,8 @@ export class CarService {
     }
 
     if (carData.brand && car.brand.id !== carData.brand) {
-      const oldBrand = await this.brandRepository.findById(car.brand.id)
-      const newBrand = await this.brandRepository.findById(carData.brand)
+      const oldBrand = await this.brandRepository.findOneBy({ id: car.brand.id })
+      const newBrand = await this.brandRepository.findOneBy({ id: carData.brand })
 
       if (!newBrand) {
         throw new AppError("New brand not found", 404)
