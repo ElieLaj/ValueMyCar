@@ -1,3 +1,4 @@
+import { FilterQuery } from "mongoose";
 import Car, { type ICar } from "../models/car.model"
 
 export class CarRepository {
@@ -13,6 +14,12 @@ export class CarRepository {
   async findAll(page: number, limit: number): Promise<{ cars: ICar[]; total: number }> {
     const skip = (page - 1) * limit
     const [cars, total] = await Promise.all([Car.find().skip(skip).limit(limit), Car.countDocuments()])
+    return { cars, total }
+  }
+
+  async findBy(criteria: Partial<ICar>, page: number, limit: number): Promise<{ cars: ICar[]; total: number }> {
+    const skip = (page - 1) * limit
+    const [cars, total] = await Promise.all([Car.find(criteria as FilterQuery<ICar>).skip(skip).limit(limit), Car.countDocuments()])
     return { cars, total }
   }
 

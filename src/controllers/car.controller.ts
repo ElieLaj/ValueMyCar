@@ -28,9 +28,11 @@ export class CarController {
 
   async getCars(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      const criteria = req.query
+
       const page = Number.parseInt(req.query.page as string) || 1
       const limit = Number.parseInt(req.query.limit as string) || 10
-      const result = await this.carService.getCars(page, limit)
+      const result = await this.carService.getCars(criteria, page, limit)
       res.status(200).json(result)
     } catch (error) {
       next(error)

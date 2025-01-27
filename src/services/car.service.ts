@@ -25,8 +25,8 @@ export class CarService {
     return car
   }
 
-  async getCars(page: number, limit: number): Promise<{ cars: ICar[]; total: number; pages: number }> {
-    const { cars, total } = await this.carRepository.findAll(page, limit)
+  async getCars(criteria: Partial<ICar>, page: number, limit: number): Promise<{ cars: ICar[]; total: number; pages: number }> {
+    const { cars, total } = await this.carRepository.findBy(criteria, page, limit)
     const pages = Math.ceil(total / limit)
     return { cars, total, pages }
   }
