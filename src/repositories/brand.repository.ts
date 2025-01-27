@@ -1,3 +1,4 @@
+import { FilterQuery } from "mongoose";
 import Brand, { type IBrand } from "../models/brand.model"
 
 export class BrandRepository {
@@ -12,9 +13,27 @@ export class BrandRepository {
     return { brands, total }
   }
 
-  async findBy(criteria: Partial<IBrand>): Promise<IBrand | null> {
-    return await Brand.findOne({ criteria })
+  async findOneBy(criteria: FilterQuery<IBrand>): Promise<IBrand | null> {
+    return await Brand.findOne(criteria)
   }
 
+  async findBy(criteria: Partial<IBrand>, page: number, limit: number): Promise<{ brands: IBrand[]; total: number }> {
+    const skip = (page - 1) * limit
+    const [brands, total] = await Promise.all([Brand.find(criteria as FilterQuery<IBrand>).skip(skip).limit(limit), Brand.countDocuments()])
+    return { brands, total }
+  }
+
+  async findById(id: string): Promise<IBrand | null> {
+    return await Brand.findOne({ id })
+  }
+
+  async update(id: string, brandData: Partial<IBrand>): Promise<IBrand | null> {
+    return await Brand.findOneAndUpdate({ id }, brandData, { new: true })
+  }
+
+  async delete(id: string): Promise<boolean> {
+    const result = await Brand.deleteOne({ id })
+    return result.deletedCount === 1
+  }
 }
 
