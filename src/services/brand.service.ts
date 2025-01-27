@@ -77,9 +77,18 @@ export class BrandService {
   }
 
   async deleteBrand(id: string): Promise<void> {
+    const brand = await this.brandRepository.findById(id)
+    if (!brand) {
+      throw new AppError("Brand not found", 404)
+    }
+
+    if (brand.cars.length > 0) {
+      throw new AppError("Cannot delete brand with associated cars", 400)
+    }
+
     const result = await this.brandRepository.delete(id)
     if (!result) {
-      throw new AppError("Brand not found", 404)
+      throw new AppError("Failed to delete brand", 500)
     }
   }
 
