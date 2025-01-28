@@ -24,9 +24,12 @@ export class UserController {
       const dtoErrors = await validate(userData);
     
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const user = await this.userService.register(userData, req?.decoded?.user?.role || UserRole.USER)
@@ -45,9 +48,12 @@ export class UserController {
       const dtoErrors = await validate(credentials);
     
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const user = await this.userService.login(credentials)

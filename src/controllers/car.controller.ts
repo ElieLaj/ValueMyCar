@@ -19,9 +19,12 @@ export class CarController {
       const dtoErrors = await validate(carData);
 
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const car = await this.carService.createCar(carData)
@@ -51,9 +54,12 @@ export class CarController {
       const dtoErrors = await validate(searchCriteria);
 
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const result = await this.carService.getCars(searchCriteria)
@@ -73,9 +79,12 @@ export class CarController {
       const dtoErrors = await validate(carData);
 
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const car = await this.carService.updateCar(req.params.id, carData)
@@ -103,9 +112,12 @@ export class CarController {
       const dtoErrors = await validate(carData);
 
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const car = await this.carService.patchCar(req.params.id, req.body)

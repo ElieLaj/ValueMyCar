@@ -20,9 +20,12 @@ export class BrandController {
       const dtoErrors = await validate(brandData);
       
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const brand = await this.brandService.createBrand(brandData)
@@ -41,9 +44,12 @@ export class BrandController {
       const dtoErrors = await validate(searchCriteria);
       
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const result = await this.brandService.getBrands(searchCriteria)
@@ -75,9 +81,12 @@ export class BrandController {
       const dtoErrors = await validate(brandData);
       
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const brand = await this.brandService.updateBrand(req.params.id, brandData)
@@ -96,9 +105,12 @@ export class BrandController {
       const dtoErrors = await validate(brandData);
       
       if (dtoErrors.length > 0) {
-        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
-        const errors = constraints.map(constraint => constraint || "").join(", ");
-        throw new AppError(errors || "Invalid input", 400);
+        const errors = dtoErrors.map(error => ({
+          field: error.property,
+          constraints: error.constraints ? Object.values(error.constraints) : []
+        }));
+
+        throw new AppError("Validation failed", 400, errors);
       }
 
       const brand = await this.brandService.patchBrand(req.params.id, brandData)
