@@ -8,8 +8,6 @@ import { BrandCarPresenter, CarPresenter } from "../types/carDtos";
 
 export class BrandController {
   private brandService: BrandService
-  private page: number = 1;
-  private limit: number = 10;
 
   constructor() {
     this.brandService = new BrandService()
