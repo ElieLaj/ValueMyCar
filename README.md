@@ -10,20 +10,21 @@ La documentation de l'API est disponible via Swagger.
 Création, mise à jour et suppression des utilisateurs.
 
 Gestion des rôles: Utilisateur, Administrateur et Super-Administrateur.
-Ces derniers sécurisants l'accès à certaines routes.
+Ces derniers sécurisent l'accès à certaines routes.
 
 Authentification et gestion des droits d'accès via JWT.
 
 ### Voitures
 
-Gestion des voitues : création, lecture, mise à jour et suppression.
+Gestion des voitures : création, lecture, mise à jour et suppression.
 
 Attribution d'une marque à chaque voiture.
-Affichage de leur prix et date de sortie.
+Affichage de leurs noms, prix et date de sortie.
 
 ### Marques
 
 Gestion des marques liées aux voitures.
+Affichage de leurs noms et pays d'origine.
 
 ## Prérequis
 
