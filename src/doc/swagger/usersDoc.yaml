@@ -14,19 +14,6 @@ paths:
         - users
       security:
         - bearerAuth: []
-      parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 1
-          description: Numéro de la page
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 10
-          description: Nombre de résultats par page
       responses:
         '200':
           description: Liste des utilisateurs récupérée avec succès
