@@ -1,5 +1,6 @@
-import { IsString, IsEmail, MinLength, IsOptional } from "class-validator"
+import { IsString, IsEmail, MinLength, IsOptional, IsEnum } from "class-validator"
 import { Expose } from "class-transformer"
+import { UserRole } from "../models/user.model"
 
 export class UserToCreate {
   @IsEmail()
@@ -10,6 +11,11 @@ export class UserToCreate {
   @MinLength(8)
   @Expose()
   password!: string
+
+  @IsEnum(UserRole)
+  @IsOptional()
+  @Expose()
+  role: UserRole = UserRole.USER
 }
 
 export class UserToLogin {
