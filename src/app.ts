@@ -5,6 +5,7 @@ import { carRoutes } from "./routes/car.route"
 import cors from "cors";
 import { brandRoutes } from "./routes/brand.route";
 import { errorHandler } from "./middlewares/errorHandler";
+import { userRoutes } from "./routes/user.route";
 
 dotenv.config()
 
@@ -15,7 +16,7 @@ app.use(cors());
 
 app.use("/api/cars", carRoutes)
 app.use("/api/brands", brandRoutes)
-
+app.use("/api/users", userRoutes)
 
 app.use(errorHandler)
 
