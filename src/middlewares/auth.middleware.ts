@@ -10,6 +10,26 @@ dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY!;
 const SECRET_KEY_REFRESH = process.env.SECRET_KEY_REFRESH!;
 
+export const checkRole = (req: Request, res: Response, next: NextFunction): void => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return next();
+  }
+
+  jwt.verify(token, SECRET_KEY, (err, decoded) => {
+    if (err) {
+      return next();
+    }
+
+    if (!decoded || typeof decoded === 'string') {
+      return next();
+    }
+    
+    (req as EncodedRequest).decoded = decoded as DecodedUser;
+    next();
+  });
+};
+
 export const checkJWT = (req: Request, res: Response, next: NextFunction): void => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {

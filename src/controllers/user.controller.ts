@@ -6,6 +6,7 @@ import { JWTService } from "../services/jwt.service"
 import { EncodedRequest } from "../types/EncodedRequest"
 import { validate } from "class-validator"
 import { AppError } from "../utils/AppError"
+import { UserRole } from "../models/user.model"
 
 export class UserController {
   private UserService: UserService
@@ -16,10 +17,19 @@ export class UserController {
     this.JwtService = new JWTService()
   }
 
-  async register(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async register(req: EncodedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userData = plainToClass(UserToCreate, req.body)
-      const user = await this.UserService.register(userData)
+
+      const dtoErrors = await validate(userData);
+    
+      if (dtoErrors.length > 0) {
+        const constraints = dtoErrors.map(error => Object.values(error.constraints || {})).flat();
+        const errors = constraints.map(constraint => constraint || "").join(", ");
+        throw new AppError(errors || "Invalid input", 400);
+      }
+
+      const user = await this.UserService.register(userData, req?.decoded?.user?.role || UserRole.USER)
       const userPresenter = plainToClass(UserPresenter, user, { excludeExtraneousValues: true })
 
       res.status(201).json(userPresenter)
