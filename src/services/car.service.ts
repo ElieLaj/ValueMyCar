@@ -21,6 +21,11 @@ export class CarService {
       throw new AppError("Brand not found", 404)
     }
 
+    const existingCar = await this.carRepository.findOneBy({ name: carData.name })
+    if (existingCar?.brand.id === brand.id) {
+      throw new AppError("That car name is already used for that brand", 400)
+    }
+
     carData.brand = brand._id
 
     const car = await this.carRepository.create(carData)
