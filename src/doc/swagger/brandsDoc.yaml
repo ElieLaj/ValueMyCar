@@ -1,0 +1,208 @@
+openapi: 3.0.0
+info:
+  title: API Documentation - Brands
+  description: Documentation Swagger pour l'API des marques.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Serveur local
+paths:
+  /brands:
+    get:
+      summary: Obtenir toutes les marques
+      tags:
+        - brands
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: Nom de la marque
+        - name: country
+          in: query
+          schema:
+            type: string
+          description: Pays de la marque
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Numéro de la page
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Nombre de résultats par page
+      responses:
+        '200':
+          description: Liste des marques récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BrandPresenter'
+        '400':
+          description: Requête invalide
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '500':
+          description: Erreur interne du serveur
+    post:
+      summary: Créer une marque
+      tags:
+        - brands
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandToCreate'
+      responses:
+        '201':
+          description: Marque créée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandPresenter'
+        '400':
+          description: Requête invalide
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '500':
+          description: Erreur interne du serveur
+  /brands/{id}:
+    put:
+      summary: Mettre à jour une marque
+      tags:
+        - brands
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandToReplace'
+      responses:
+        '200':
+          description: Marque mise à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandPresenter'
+        '400':
+          description: Requête invalide
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '404':
+          description: Marque non trouvée
+        '500':
+          description: Erreur interne du serveur
+    delete:
+      summary: Supprimer une marque
+      tags:
+        - brands
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Marque supprimée avec succès
+        '400':
+          description: Requête invalide
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '404':
+          description: Marque non trouvée
+        '500':
+          description: Erreur interne du serveur
+    patch:
+      summary: Modifier partiellement une marque
+      tags:
+        - brands
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandToModify'
+      responses:
+        '200':
+          description: Marque modifiée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandPresenter'
+        '400':
+          description: Requête invalide
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '404':
+          description: Marque non trouvée
+        '500':
+          description: Erreur interne du serveur
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    BrandToCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+    BrandToModify:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+    BrandToReplace:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+    BrandPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        cars:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarBrandPresenter'

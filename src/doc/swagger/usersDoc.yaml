@@ -1,0 +1,227 @@
+openapi: 3.0.0
+info:
+  title: API Documentation - Users
+  description: Documentation Swagger pour l'API des utilisateurs.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Serveur local
+paths:
+  /users:
+    get:
+      summary: Obtenir tous les utilisateurs
+      tags:
+        - users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Numéro de la page
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Nombre de résultats par page
+      responses:
+        '200':
+          description: Liste des utilisateurs récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserPresenter'
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '500':
+          description: Erreur interne du serveur
+  /users/register:
+    post:
+      summary: Enregistrer un utilisateur
+      tags:
+        - users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserToCreate'
+      responses:
+        '201':
+          description: Utilisateur enregistré avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPresenter'
+        '400':
+          description: Requête invalide
+        '500':
+          description: Erreur interne du serveur
+  /users/login:
+    post:
+      summary: Connexion d'un utilisateur
+      tags:
+        - users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserToLogin'
+      responses:
+        '200':
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userPresenter:
+                    $ref: '#/components/schemas/UserPresenter'
+                  token:
+                    type: object
+                    properties:
+                      accessToken:
+                        type: string
+                      refreshToken:
+                        type: string
+        '400':
+          description: Requête invalide
+        '500':
+          description: Erreur interne du serveur
+  /users/{id}:
+    get:
+      summary: Obtenir un utilisateur par ID
+      tags:
+        - users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails de l'utilisateur récupérés avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPresenter'
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '404':
+          description: Utilisateur non trouvé
+        '500':
+          description: Erreur interne du serveur
+    put:
+      summary: Mettre à jour un utilisateur
+      tags:
+        - users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserToModify'
+      responses:
+        '200':
+          description: Utilisateur mis à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPresenter'
+        '400':
+          description: Requête invalide
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '403':
+          description: Interdit
+        '404':
+          description: Utilisateur non trouvé
+        '500':
+          description: Erreur interne du serveur
+    delete:
+      summary: Supprimer un utilisateur
+      tags:
+        - users
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Utilisateur supprimé avec succès
+        '401':
+          description: Aucun token envoyé ou Token invalide
+        '403':
+          description: Interdit
+        '404':
+          description: Utilisateur non trouvé
+        '500':
+          description: Erreur interne du serveur
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    UserToCreate:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+            - superadmin
+    UserToLogin:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    UserToModify:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+            - superadmin
+    UserPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string

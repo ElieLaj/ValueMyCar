@@ -1,0 +1,232 @@
+openapi: 3.0.0
+info:
+  title: API Documentation - Cars
+  description: Documentation Swagger pour l'API des voitures.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Serveur local
+paths:
+  /cars:
+    get:
+      summary: Obtenir toutes les voitures
+      tags:
+        - cars
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: Nom de la voiture
+        - name: brand
+          in: query
+          schema:
+            type: string
+          description: ID de la marque
+        - name: year
+          in: query
+          schema:
+            type: integer
+          description: Année de la voiture
+        - name: price
+          in: query
+          schema:
+            type: number
+          description: Prix de la voiture
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Numéro de la page
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Nombre de résultats par page
+      responses:
+        '200':
+          description: Liste des voitures récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarPresenter'
+        '401':
+          description: Aucun token envoyé ou Token invalide
+    post:
+      summary: Créer une voiture
+      tags:
+        - cars
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarToCreate'
+      responses:
+        '201':
+          description: Voiture créée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandCarPresenter'
+        '401':
+          description: Aucun token envoyé ou Token invalide
+  /cars/{id}:
+    get:
+      summary: Obtenir une voiture par ID
+      tags:
+        - cars
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Détails de la voiture récupérés avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarPresenter'
+        '401':
+          description: Aucun token envoyé ou Token invalide
+    put:
+      summary: Mettre à jour une voiture
+      tags:
+        - cars
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarToModify'
+      responses:
+        '200':
+          description: Voiture mise à jour avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarPresenter'
+        '401':
+          description: Aucun token envoyé ou Token invalide
+    delete:
+      summary: Supprimer une voiture
+      tags:
+        - cars
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Voiture supprimée avec succès
+        '401':
+          description: Aucun token envoyé ou Token invalide
+    patch:
+      summary: Modifier partiellement une voiture
+      tags:
+        - cars
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarToModify'
+      responses:
+        '200':
+          description: Voiture modifiée avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarPresenter'
+        '401':
+          description: Aucun token envoyé ou Token invalide
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    CarToCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        year:
+          type: integer
+        price:
+          type: number
+    CarToModify:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        year:
+          type: integer
+        price:
+          type: number
+    CarPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        brand:
+          $ref: '#/components/schemas/CarBrandPresenter'
+        year:
+          type: integer
+        price:
+          type: number
+    BrandCarPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        brand:
+          $ref: '#/components/schemas/BrandPresenter'
+        year:
+          type: integer
+        price:
+          type: number
+    CarBrandPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string

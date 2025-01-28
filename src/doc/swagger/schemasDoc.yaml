@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+  title: API Documentation - Schemas
+  description: Documentation Swagger pour les schémas partagés.
+  version: 1.0.0
+components:
+  schemas:
+    CarToCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        year:
+          type: integer
+        price:
+          type: number
+    CarToModify:
+      type: object
+      properties:
+        name:
+          type: string
+        brand:
+          type: string
+        year:
+          type: integer
+        price:
+          type: number
+    CarPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        brand:
+          $ref: '#/components/schemas/CarBrandPresenter'
+        year:
+          type: integer
+        price:
+          type: number
+    BrandCarPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        brand:
+          $ref: '#/components/schemas/BrandPresenter'
+        year:
+          type: integer
+        price:
+          type: number
+    CarBrandPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    BrandPresenter:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        country:
+          type: string
+        cars:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarBrandPresenter'
+    BrandToCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+    BrandToModify:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+    BrandToReplace:
+      type: object
+      properties:
+        name:
+          type: string
+        country:
+          type: string
+    UserToCreate:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+            - superadmin
+    UserToLogin:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    UserToModify:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum:
+            - user
+            - admin
+            - superadmin
