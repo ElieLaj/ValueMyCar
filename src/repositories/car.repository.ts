@@ -12,6 +12,16 @@ export class CarRepository {
     return await Car.findOne({ id }).populate("brand")
   }
 
+  async findOneBy(filters: FilterQuery<SearchCarCriteria>): Promise<ICar | null> {
+    const query: FilterQuery<SearchCarCriteria> = {}
+    if (filters.name) query.name = { $regex: filters.name, $options: "i" }
+    if (filters.brand) query.brand = filters.brand
+    if (filters.year) query.year = filters.year
+    if (filters.price) query.price = filters.price
+
+    return await Car.findOne(query).populate("brand")
+  }
+
   async findAll(page: number, limit: number): Promise<{ cars: ICar[]; total: number }> {
     const skip = (page - 1) * limit
     const [cars, total] = await Promise.all([Car.find().populate("brand").skip(skip).limit(limit), Car.countDocuments()])
