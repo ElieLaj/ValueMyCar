@@ -40,6 +40,7 @@ export class SearchBrandCriteria {
   @IsOptional()
   @Min(1)
   @Expose()
+  @Type(() => Number)
   page: number = 1;
 
   @IsNumber()
@@ -47,6 +48,7 @@ export class SearchBrandCriteria {
   @Min(1)
   @Max(100)
   @Expose()
+  @Type(() => Number)
   limit: number = 10;
 }
 

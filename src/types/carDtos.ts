@@ -73,6 +73,7 @@ export class SearchCarCriteria {
   @IsNumber()
   @IsOptional()
   @Min(1)
+  @Type(() => Number)
   @Expose()
   page: number = 1
 
@@ -80,6 +81,7 @@ export class SearchCarCriteria {
   @IsOptional()
   @Min(1)
   @Max(100)
+  @Type(() => Number)
   @Expose()
   limit: number = 10
 }
