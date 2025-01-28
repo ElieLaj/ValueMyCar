@@ -2,10 +2,17 @@ import mongoose, { Schema, type Document } from "mongoose"
 import { v4 as uuidv4 } from "uuid"
 import bcrypt from "bcrypt"
 
+export enum UserRole {
+  USER = "user",
+  ADMIN = "admin",
+  SUPERADMIN = "superadmin",
+}
+
 export interface IUser extends Document {
   id: string
   email: string
   password: string
+  role: UserRole
   comparePassword(candidatePassword: string): Promise<boolean>
 }
 
@@ -13,6 +20,7 @@ const UserSchema: Schema = new Schema({
   id: { type: String, default: uuidv4, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  role: { type: String, enum: Object.values(UserRole), default: UserRole.USER },
 })
 
 UserSchema.pre<IUser>("save", async function (next) {

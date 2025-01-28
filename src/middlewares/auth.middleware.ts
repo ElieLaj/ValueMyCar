@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError';
-import { EncodedRequest } from '../types/EncodedRequest';
+import { DecodedUser, EncodedRequest } from '../types/EncodedRequest';
+import { UserRole } from '../models/user.model';
 
 dotenv.config();
 
@@ -23,7 +24,7 @@ export const checkJWT = (req: Request, res: Response, next: NextFunction): void 
     if (!decoded || typeof decoded === 'string') {
       return next(new AppError('Invalid token', 401));
     }
-    (req as EncodedRequest).decoded = decoded as { user: { id: string; email: string; } };
+    (req as EncodedRequest).decoded = decoded as DecodedUser;
     next();
   });
 };
@@ -42,7 +43,7 @@ export const checkJWTSecret = (req: Request, res: Response, next: NextFunction):
     if (!decoded || typeof decoded === 'string') {
       return next(new AppError('Invalid token', 401));
     }
-    (req as EncodedRequest).decoded = decoded as { user: { id: string; email: string; } };
+    (req as EncodedRequest).decoded = decoded as DecodedUser;
     next();
   });
 };
