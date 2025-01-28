@@ -16,14 +16,11 @@ export class UserRepository {
     return await User.findOne(query)
   }
 
-  async findBy(filters: SearchUserCriteria, page: number, limit: number): Promise<{ brands: IUser[]; total: number }> {
+  async findBy(page: number, limit: number): Promise<{ users: IUser[]; total: number }> {
     const skip = (page - 1) * limit
     
-    const query: FilterQuery<SearchUserCriteria> = {}
-    if (filters.email) query.email = filters.email
-    
-    const [brands, total] = await Promise.all([User.find(query).skip(skip).limit(limit), User.countDocuments(query)])
-    return { brands, total }
+    const [users, total] = await Promise.all([User.find().skip(skip).limit(limit), User.countDocuments()])
+    return { users, total }
   }
 
   async update(id: string, userData: Partial<IUser>): Promise<IUser | null> {

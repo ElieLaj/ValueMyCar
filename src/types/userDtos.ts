@@ -28,6 +28,24 @@ export class UserToLogin {
   password!: string
 }
 
+export class UserToModify {
+  @IsEmail()
+  @IsOptional()
+  @Expose()
+  email?: string
+
+  @IsString()
+  @IsOptional()
+  @Expose()
+  password?: string
+
+  @IsEnum(UserRole)
+  @IsOptional()
+  @Expose()
+  role?: UserRole
+}
+
+
 export class SearchUserCriteria {
   @IsString()
   @IsOptional()
