@@ -9,7 +9,7 @@ export class CarRepository {
   }
 
   async findById(id: string): Promise<ICar | null> {
-    return await Car.findOne({ id }).populate("brand")
+    return await Car.findOne({ id }).populate("brand").populate("owner")
   }
 
   async findOneBy(filters: FilterQuery<SearchCarCriteria>): Promise<ICar | null> {
@@ -19,12 +19,12 @@ export class CarRepository {
     if (filters.year) query.year = filters.year
     if (filters.price) query.price = filters.price
 
-    return await Car.findOne(query).populate("brand")
+    return await Car.findOne(query).populate("brand").populate("owner")
   }
 
   async findAll(page: number, limit: number): Promise<{ cars: ICar[]; total: number }> {
     const skip = (page - 1) * limit
-    const [cars, total] = await Promise.all([Car.find().populate("brand").skip(skip).limit(limit), Car.countDocuments()])
+    const [cars, total] = await Promise.all([Car.find().populate("brand").populate("owner").skip(skip).limit(limit), Car.countDocuments()])
     return { cars, total }
   }
 
@@ -37,12 +37,12 @@ export class CarRepository {
     if (filters.year) query.year = filters.year
     if (filters.price) query.price = filters.price
 
-    const [cars, total] = await Promise.all([Car.find(query).populate("brand").skip(skip).limit(limit), Car.countDocuments(query)])
+    const [cars, total] = await Promise.all([Car.find(query).populate("brand").populate("owner").skip(skip).limit(limit), Car.countDocuments(query)])
     return { cars, total }
   }
 
   async update(id: string, carData: Partial<ICar>): Promise<ICar | null> {
-    return await Car.findOneAndUpdate({ id }, carData, { new: true }).populate("brand")
+    return await Car.findOneAndUpdate({ id }, carData, { new: true }).populate("brand").populate("owner")
   }
 
   async delete(id: string): Promise<boolean> {

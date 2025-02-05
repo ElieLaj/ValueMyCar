@@ -1,9 +1,11 @@
 import type { Request, Response, NextFunction } from "express"
 import { CarService } from "../services/car.service"
 import { plainToClass, plainToInstance } from "class-transformer"
-import { BrandCarPresenter, CarPresenter, CarToCreate, CarToModify, SearchCarCriteria } from "../types/carDtos"
+import { AdminCarPresenter, BrandCarPresenter, CarPresenter, CarToCreate, CarToModify, SearchCarCriteria } from "../types/carDtos"
 import { validate } from "class-validator"
 import { AppError } from "../utils/AppError"
+import { EncodedRequest } from "../types/EncodedRequest"
+import { UserRole } from "../models/user.model"
 
 export class CarController {
   private carService: CarService
@@ -37,7 +39,7 @@ export class CarController {
     }
   }
 
-  async getCar(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getCar(req: EncodedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const car = await this.carService.getCar(req.params.id)
       const carPresenter = plainToClass(CarPresenter, car, { excludeExtraneousValues: true })
@@ -47,7 +49,7 @@ export class CarController {
     }
   }
 
-  async getCars(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getCars(req: EncodedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const searchCriteria = plainToClass(SearchCarCriteria, req.query)
 
@@ -64,7 +66,9 @@ export class CarController {
 
       const result = await this.carService.getCars(searchCriteria)
 
-      const carPresenters = plainToInstance(CarPresenter, result.cars, { excludeExtraneousValues: true })
+      const carPresenters = req.decoded.user.role === UserRole.USER ? 
+        plainToInstance(CarPresenter, result.cars, { excludeExtraneousValues: true }) :
+        plainToInstance(AdminCarPresenter, result.cars, { excludeExtraneousValues: true })
 
       res.status(200).json(carPresenters)
     } catch (error) {

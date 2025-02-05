@@ -2,6 +2,7 @@ import { IsString, IsNumber, IsUUID, Min, Max, IsOptional, ValidateNested } from
 import { Expose, Transform, Type } from "class-transformer"
 import { BrandPresenter, CarBrandPresenter } from "./brandDtos"
 import "reflect-metadata"
+import { UserPresenter } from "./userDtos"
 
 export class CarToCreate {
   @IsString()
@@ -104,6 +105,55 @@ export class CarPresenter {
 
   @Expose()
   price!: number
+
+  
+}
+
+export class AdminCarPresenter {
+  @Expose()
+  id!: string
+
+  @Expose()
+  name!: string
+
+  @Type(() => CarBrandPresenter)
+  @Expose()
+  brand!: CarBrandPresenter
+
+  @Expose()
+  year!: number
+
+  @Expose()
+  price!: number
+
+  @Type(() => UserPresenter)
+  @Expose()
+  owner?: UserPresenter
+
+  @Type(() => UserPresenter)
+  @Expose()
+  renter?: UserPresenter
+}
+
+export class UserCarPresenter {
+  @Expose()
+  id!: string
+
+  @Expose()
+  name!: string
+
+  @Type(() => CarBrandPresenter)
+  @Expose()
+  brand!: CarBrandPresenter
+
+  @Expose()
+  year!: number
+
+  @Expose()
+  price!: number
+
+  @Expose()
+  renter?: string
 }
 
 export class BrandCarPresenter {

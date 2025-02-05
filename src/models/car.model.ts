@@ -1,6 +1,7 @@
 import mongoose, { Schema, type Document } from "mongoose"
 import { v4 as uuidv4 } from "uuid"
 import { IBrand } from "./brand.model"
+import { IUser } from "./user.model"
 
 export interface ICar extends Document {
   id: string
@@ -8,6 +9,8 @@ export interface ICar extends Document {
   brand: IBrand["_id"]
   year: number
   price: number
+  owner: IUser["_id"]
+  renter: IUser["_id"]
 }
 
 const CarSchema: Schema = new Schema({
@@ -25,6 +28,8 @@ const CarSchema: Schema = new Schema({
     required: [true, "Price is required"],
     min: [0, "Price must be positive"],
   },
+  owner: { type: Schema.Types.ObjectId, ref: "User" },
+  renter: { type: Schema.Types.ObjectId, ref: "User" },
   },
   { versionKey: false, timestamps: true },
 )
