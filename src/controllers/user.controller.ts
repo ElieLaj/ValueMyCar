@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express"
 import { UserService } from "../services/user.service"
-import { UserToCreate, UserToLogin, UserPresenter, UserToModify } from "../types/userDtos"
-import { plainToClass } from "class-transformer"
+import { UserToCreate, UserToLogin, UserPresenter, UserToModify, AdminUserPresenter } from "../types/userDtos"
+import { plainToClass, plainToInstance } from "class-transformer"
 import { JWTService } from "../services/jwt.service"
 import { EncodedRequest } from "../types/EncodedRequest"
 import { validate } from "class-validator"
@@ -89,12 +89,14 @@ export class UserController {
     }
   }
 
-  async getUsers(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getUsers(req: EncodedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const page = Number.parseInt(req.query.page as string) || 1
       const limit = Number.parseInt(req.query.limit as string) || 10
       const result = await this.userService.getUsers(page, limit)
-      const userPresenters = plainToClass(UserPresenter, result.users, { excludeExtraneousValues: true })
+      const userPresenters = req.decoded.user.role === UserRole.USER ?
+        plainToInstance(UserPresenter, result.users, { excludeExtraneousValues: true }) :
+        plainToInstance(AdminUserPresenter, result.users, { excludeExtraneousValues: true })
       res.status(200).json(userPresenters)
     } catch (error) {
       next(error)

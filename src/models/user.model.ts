@@ -1,6 +1,8 @@
 import mongoose, { Schema, type Document } from "mongoose"
 import { v4 as uuidv4 } from "uuid"
 import bcrypt from "bcrypt"
+import { ICar } from "./car.model"
+import { IRental } from "./rental.model"
 
 export enum UserRole {
   USER = "user",
@@ -14,6 +16,8 @@ export interface IUser extends Document {
   password: string
   role: UserRole
   comparePassword(candidatePassword: string): Promise<boolean>
+  cars: ICar["_id"]
+  rents: IRental["_id"]
 }
 
 const UserSchema: Schema = new Schema({
@@ -21,6 +25,8 @@ const UserSchema: Schema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: Object.values(UserRole), default: UserRole.USER },
+  cars: [{ type: Schema.Types.ObjectId, ref: "Car" }],
+  rents: [{ type: Schema.Types.ObjectId, ref: "Rental" }],
 })
 
 UserSchema.pre<IUser>("save", async function (next) {

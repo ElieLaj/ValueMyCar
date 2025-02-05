@@ -1,6 +1,7 @@
-import { IsString, IsEmail, MinLength, IsOptional, IsEnum } from "class-validator"
-import { Expose } from "class-transformer"
+import { IsString, IsEmail, MinLength, IsOptional, IsEnum, IsArray, ValidateNested } from "class-validator"
+import { Expose, Type } from "class-transformer"
 import { UserRole } from "../models/user.model"
+import { CarPresenter, UserCarPresenter } from "./carDtos"
 
 export class UserToCreate {
   @IsEmail()
@@ -60,9 +61,20 @@ export class SearchUserCriteria {
 
 export class UserPresenter {
   @Expose()
+  email!: string
+}
+
+export class AdminUserPresenter extends UserPresenter {
+  @Expose()
   id!: string
 
   @Expose()
-  email!: string
+  role!: UserRole
+  
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CarPresenter)
+  @Expose()
+  cars!: CarPresenter[]
 }
 

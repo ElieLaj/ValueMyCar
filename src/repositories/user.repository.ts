@@ -13,18 +13,27 @@ export class UserRepository {
     if (filters.email) query.email = filters.email
     if (filters.id) query.id = filters.id
 
-    return await User.findOne(query)
+    return await User.findOne(query).populate({
+        path: "cars",
+        populate: { path: "brand" }
+    }).populate("rents")
   }
 
   async findBy(page: number, limit: number): Promise<{ users: IUser[]; total: number }> {
     const skip = (page - 1) * limit
     
-    const [users, total] = await Promise.all([User.find().skip(skip).limit(limit), User.countDocuments()])
+    const [users, total] = await Promise.all([User.find().populate({
+        path: "cars",
+        populate: { path: "brand" }
+    }).populate("rents").skip(skip).limit(limit), User.countDocuments()])
     return { users, total }
   }
 
   async update(id: string, userData: Partial<IUser>): Promise<IUser | null> {
-    return await User.findOneAndUpdate({ id }, userData, { new: true })
+    return await User.findOneAndUpdate({ id }, userData, { new: true }).populate({
+        path: "cars",
+        populate: { path: "brand" }
+    }).populate("rents")
   }
 
   async delete(id: string): Promise<boolean> {

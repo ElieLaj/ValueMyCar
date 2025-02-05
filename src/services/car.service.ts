@@ -3,15 +3,18 @@ import type { ICar } from "../models/car.model"
 import { AppError } from "../utils/AppError"
 import { BrandRepository } from "../repositories/brand.repository"
 import { CarToCreate, CarToModify, SearchCarCriteria } from "../types/carDtos"
+import { UserRepository } from "../repositories/user.repository"
 
 
 export class CarService {
   private carRepository: CarRepository
   private brandRepository: BrandRepository
+  private userRepository: UserRepository
 
   constructor() {
     this.carRepository = new CarRepository()
     this.brandRepository = new BrandRepository()
+    this.userRepository = new UserRepository()
   }
 
   async createCar(carData: CarToCreate): Promise<ICar> {
@@ -126,6 +129,18 @@ export class CarService {
 
       newBrand.cars.push(car._id)
       await newBrand.save()
+    }
+
+    if(carData.owner) {
+      const owner = await this.userRepository.findOneBy({ id: carData.owner })
+      if (!owner) {
+        throw new AppError("Owner not found", 404)
+      }
+
+      carData.owner = owner._id
+
+      owner.cars.push(car._id)
+      await owner.save()
     }
 
     const updatedCar = await this.carRepository.update(id, carData)
