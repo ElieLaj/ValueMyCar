@@ -1,9 +1,13 @@
 import Rental, { type IRental } from "../models/rental.model"
 
 export class RentalRepository {
-  async create(rentalData: Partial<IRental>): Promise<IRental> {
+  async create(rentalData: Partial<IRental>): Promise<IRental | null> {
     const rental = new Rental(rentalData)
-    return await rental.save()
+    await rental.save()
+    return await Rental.findOne({ _id: rental._id }).populate("owner").populate("renter").populate({
+        path: "car",
+        populate: { path: "brand" }
+    })
   }
 
   async findById(id: string): Promise<IRental | null> {

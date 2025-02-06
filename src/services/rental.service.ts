@@ -56,6 +56,10 @@ export class RentalService {
       status: "pending",
     })
 
+    if (!rental) {
+      throw new AppError("Rental creation failed", 500)
+    }
+
     car.renter = renter._id
     await car.save()
 
@@ -101,6 +105,11 @@ export class RentalService {
       throw new AppError("You do not have permission to update this rental", 403)
     }
 
+    const car = await this.carRepository.findById(rental.car._id)
+    if (!car) {
+      throw new AppError("Car not found", 404)
+    }
+
     if (rentalData.status) {
       if (user.id === rental.renter.id) {
         if((rentalData.status !== "cancelled")) {
@@ -113,16 +122,40 @@ export class RentalService {
       else if(user.id === rental.owner.id && (rental.status === "cancelled" || rental.status === "completed")) {
         throw new AppError("This rental is already cancelled or completed", 400)
       }
+      if(rentalData.status === "completed" || rentalData.status === "cancelled") {
+        car.renter = null
+        await car.save()
+      }
     }
-    
 
-    const car = await this.carRepository.findById(rental.car.toString())
+    if (rentalData.totalPrice && rental.status !== "pending") {
+      throw new AppError("You cannot update the total price of a rental when it isn't pending", 400)
+    }
+
+
+    rental.status = rentalData.status
+    return await rental.save()
+  }
+
+  async deleteRental(id: string, userId: string, userRole: UserRole): Promise<void> {
+    const rental = await this.rentalRepository.findById(id)
+    if (!rental) {
+      throw new AppError("Rental not found", 404)
+    }
+
+    if (rental.renter._id !== userId && rental.owner._id !== userId && userRole !== UserRole.ADMIN && userRole !== UserRole.SUPERADMIN) {
+      throw new AppError("You do not have permission to delete this rental", 403)
+    }
+
+    const car = await this.carRepository.findById(rental.car.id)
     if (!car) {
       throw new AppError("Car not found", 404)
     }
 
-    rental.status = rentalData.status
-    return await rental.save()
+    car.renter = null
+    await car.save()
+
+    await this.rentalRepository.delete(id)
   }
 
   async getUserRentals(

@@ -13,6 +13,7 @@ router.get("/:id", Auth.checkJWT, (req, res, next) => rentalController.getRental
 router.patch("/:id/status", Auth.checkJWT, (req, res, next) => rentalController.updateRentalStatus(req as EncodedRequest, res, next))
 router.get("/user/rentals", Auth.checkJWT, (req, res, next) => rentalController.getUserRentals(req as EncodedRequest, res, next))
 router.get("/car/:carId/rentals", Auth.checkJWT, (req, res, next) => rentalController.getCarRentals(req as EncodedRequest, res, next))
+router.delete("/:id", Auth.checkJWT, (req, res, next) => rentalController.deleteRental(req as EncodedRequest, res, next))
 
 export const rentalRoutes = router
 
